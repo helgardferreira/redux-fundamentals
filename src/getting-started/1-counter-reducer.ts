@@ -1,4 +1,4 @@
-import { AnyAction, Action, Reducer } from "redux"
+import { AnyAction, createStore } from "redux"
 
 export const counter = (state = 0, action: AnyAction): number => {
   switch (action.type) {
@@ -11,7 +11,7 @@ export const counter = (state = 0, action: AnyAction): number => {
   }
 }
 
-function createStore<S, A extends Action = AnyAction>(reducer: Reducer<S, A>) {
+/* function createStore<S, A extends Action = AnyAction>(reducer: Reducer<S, A>) {
   // : Store<number, AnyAction>
   let state: S
   const listeners: (() => void)[] = []
@@ -40,7 +40,7 @@ function createStore<S, A extends Action = AnyAction>(reducer: Reducer<S, A>) {
     dispatch,
     subscribe,
   }
-}
+} */
 
 const store = createStore(counter)
 
