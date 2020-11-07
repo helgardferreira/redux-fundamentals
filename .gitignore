@@ -6,6 +6,8 @@ node_modules/
 
 # Output folder
 out/
+dist/
+.cache/
 
 # Typescript v1 declaration files
 typings/

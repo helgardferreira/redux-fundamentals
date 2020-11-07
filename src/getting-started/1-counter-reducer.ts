@@ -1,4 +1,4 @@
-import { AnyAction } from "redux"
+import { AnyAction, createStore } from "redux"
 
 export const counter = (state = 0, action: AnyAction): number => {
   switch (action.type) {
@@ -10,3 +10,19 @@ export const counter = (state = 0, action: AnyAction): number => {
       return state
   }
 }
+
+const store = createStore(counter)
+
+const render = () => {
+  document.body.innerText = store.getState().toString()
+}
+
+store.subscribe(() => {
+  render()
+})
+
+render()
+
+document.addEventListener("click", () => {
+  store.dispatch({ type: "INCREMENT" })
+})
