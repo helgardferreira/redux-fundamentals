@@ -1,7 +1,7 @@
 import {
   Todo,
   toggleTodo,
-} from "../getting-started/4-avoiding-object-mutations"
+} from "../getting-started/4-avoidingObjectMutations"
 import deepFreeze from "../utils/deepFreeze"
 
 test("toggles todo", () => {

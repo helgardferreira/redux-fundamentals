@@ -1,4 +1,4 @@
-import { counter } from "../getting-started/1-counter-reducer"
+import { counter } from "../getting-started/1-counterReducer"
 
 test("increments 0", () => {
   expect(

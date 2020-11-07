@@ -2,7 +2,7 @@ import {
   addCounter,
   incrementCounter,
   removeCounter,
-} from "../getting-started/3-avoiding-mutations"
+} from "../getting-started/3-avoidingMutations"
 import deepFreeze from "../utils/deepFreeze"
 
 test("adds counter immutably", () => {
