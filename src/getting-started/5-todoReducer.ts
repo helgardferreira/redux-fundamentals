@@ -17,32 +17,44 @@ export interface ToggleTodoAction {
 
 type TodoAction = AddTodoAction | ToggleTodoAction
 
-export const todoReducer: Reducer<Todo[], TodoAction> = (
+export const todoReducer: Reducer<Todo, TodoAction> = (
+  state = {
+    id: 0,
+    text: "",
+    completed: false,
+  },
+  action
+) => {
+  switch (action.type) {
+    case ADD_TODO:
+      return {
+        id: action.id,
+        text: action.text,
+        completed: false,
+      }
+    case TOGGLE_TODO: {
+      return state.id === action.id
+        ? {
+            ...state,
+            completed: !state.completed,
+          }
+        : state
+    }
+    default:
+      return state
+  }
+}
+
+export const todosReducer: Reducer<Todo[], TodoAction> = (
   state = [],
   action
 ) => {
   switch (action.type) {
     case ADD_TODO:
-      return [
-        ...state,
-        {
-          id: action.id,
-          text: action.text,
-          completed: false,
-        },
-      ]
+      return [...state, todoReducer(undefined, action)]
     case TOGGLE_TODO: {
-      const index = state.findIndex(({ id }) => id === action.id)
-
-      return state
-        .slice(0, index)
-        .concat({
-          ...state[index],
-          completed: !state[index].completed,
-        })
-        .concat(state.slice(index + 1))
+      return state.map(todo => todoReducer(todo, action))
     }
-
     default:
       return state
   }

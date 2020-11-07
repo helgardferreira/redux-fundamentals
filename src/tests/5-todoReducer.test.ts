@@ -1,7 +1,7 @@
 import { Todo } from "../getting-started/4-avoidingObjectMutations"
 import {
   AddTodoAction,
-  todoReducer,
+  todosReducer,
   ToggleTodoAction,
 } from "../getting-started/5-todoReducer"
 import deepFreeze from "../utils/deepFreeze"
@@ -26,7 +26,7 @@ test("adds todo to list", () => {
     },
   ]
 
-  expect(todoReducer(stateBefore, action)).toEqual(stateAfter)
+  expect(todosReducer(stateBefore, action)).toEqual(stateAfter)
 })
 
 test("toggles todo in list", () => {
@@ -74,5 +74,5 @@ test("toggles todo in list", () => {
     },
   ]
 
-  expect(todoReducer(stateBefore, action)).toEqual(stateAfter)
+  expect(todosReducer(stateBefore, action)).toEqual(stateAfter)
 })
