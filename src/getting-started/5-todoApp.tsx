@@ -1,27 +1,16 @@
-import React, {
-  Component,
-  createContext,
-  FunctionComponent,
-  useContext,
-  useRef,
-} from "react"
+import React, { Component, FunctionComponent, useContext, useRef } from "react"
 import ReactDOM from "react-dom"
-import {
-  createStore,
-  combineReducers,
-  Reducer,
-  Unsubscribe,
-  Store,
-} from "redux"
+import { createStore, combineReducers, Reducer, Unsubscribe } from "redux"
+import { Provider, ReactReduxContext } from "react-redux"
 import { Todo } from "./4-avoidingObjectMutations"
 
 export const ADD_TODO = "ADD_TODO"
 export const TOGGLE_TODO = "TOGGLE_TODO"
 export const SET_VISIBILITY_FILTER = "SET_VISIBILITY_FILTER"
 
-const nullReducer = () => {
+/* const nullReducer = () => {
   return
-}
+} */
 
 export interface AddTodoAction {
   type: typeof ADD_TODO
@@ -120,7 +109,7 @@ const todoAppReducer = combineReducers({
   visibilityFilter: visibilityFilterReducer,
 })
 
-const StoreContext = createContext<Store>(createStore(nullReducer))
+// const StoreContext = createContext<Store>(createStore(nullReducer))
 
 /* const todoAppReducer: Reducer<TodoAppState, TodoAppAction> = (state = {}, action) => {
   return {
@@ -199,7 +188,8 @@ const TodoListFC: FunctionComponent<{
 // the role of defining the behavior for presentation
 const AddTodoFC: FunctionComponent = () => {
   const input = useRef<HTMLInputElement>(null)
-  const store = useContext(StoreContext)
+  // const store = useContext(StoreContext)
+  const { store } = useContext(ReactReduxContext)
 
   return (
     <>
@@ -245,8 +235,8 @@ const LinkFC: FunctionComponent<{
 
 // FilterLink container component
 class FilterLink extends Component<{ filter: string }> {
-  static contextType = StoreContext
-  context!: React.ContextType<typeof StoreContext>
+  static contextType = ReactReduxContext
+  context!: React.ContextType<typeof ReactReduxContext>
 
   private unsubscribe: Unsubscribe = () => {
     return
@@ -255,7 +245,7 @@ class FilterLink extends Component<{ filter: string }> {
   // Anytime the store changes this container component will re-render
   // thanks to forceUpdate()
   componentDidMount() {
-    const store = this.context
+    const { store } = this.context
     store.subscribe(() => this.forceUpdate())
   }
 
@@ -265,7 +255,7 @@ class FilterLink extends Component<{ filter: string }> {
 
   render() {
     const { filter, children } = this.props
-    const store = this.context
+    const { store } = this.context
     const state = store.getState()
 
     return (
@@ -296,8 +286,8 @@ const FooterFC: FunctionComponent = () => (
 
 // VisibleTodoList container component
 class VisibleTodoList extends Component {
-  static contextType = StoreContext
-  context!: React.ContextType<typeof StoreContext>
+  static contextType = ReactReduxContext
+  context!: React.ContextType<typeof ReactReduxContext>
 
   private unsubscribe: Unsubscribe = () => {
     return
@@ -306,7 +296,7 @@ class VisibleTodoList extends Component {
   // Anytime the store changes this container component will re-render
   // thanks to forceUpdate()
   componentDidMount() {
-    const store = this.context
+    const { store } = this.context
     store.subscribe(() => this.forceUpdate())
   }
 
@@ -315,7 +305,7 @@ class VisibleTodoList extends Component {
   }
 
   render() {
-    const store = this.context
+    const { store } = this.context
     const state = store.getState()
 
     return (
@@ -370,9 +360,9 @@ render() */
 
 if (document.getElementById("root"))
   ReactDOM.render(
-    <StoreContext.Provider value={createStore(todoAppReducer)}>
+    <Provider store={createStore(todoAppReducer)}>
       <TodoApp />
-    </StoreContext.Provider>,
+    </Provider>,
     document.getElementById("root")
   )
 
