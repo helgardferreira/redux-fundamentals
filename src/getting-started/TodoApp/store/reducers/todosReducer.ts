@@ -1,6 +1,8 @@
 import { Reducer } from "redux"
 import { TodoType } from "../../types/TodoType"
-import { TodoAction, ADD_TODO, TOGGLE_TODO } from "../actions"
+import { TodoAction } from "../actions"
+import { ADD_TODO } from "../actions/addTodoAction"
+import { TOGGLE_TODO } from "../actions/toggleTodoAction"
 import { todoReducer } from "./todoReducer"
 
 export const todosReducer: Reducer<TodoType[], TodoAction> = (

@@ -1,5 +1,8 @@
 import { Reducer } from "redux"
-import { VisibilityFilterAction, SET_VISIBILITY_FILTER } from "../actions"
+import {
+  VisibilityFilterAction,
+  SET_VISIBILITY_FILTER,
+} from "../actions/visibilityFilterAction"
 
 export const visibilityFilterReducer: Reducer<
   string,

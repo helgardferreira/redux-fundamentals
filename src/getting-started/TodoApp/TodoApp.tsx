@@ -6,6 +6,7 @@ import VisibleTodoList from "./components/VisibleTodoList"
 import FooterFC from "./components/FooterFC"
 import AddTodoFC from "./components/AddTodoFC"
 import { todoAppReducer } from "./store/reducers"
+import { TodoType } from "./types/TodoType"
 
 /* interface TodoAppProps {
   todos: Todo[]
@@ -41,9 +42,23 @@ class TodoApp extends Component {
 store.subscribe(render)
 render() */
 
+const initialState: {
+  todos: TodoType[]
+} = {
+  todos: [
+    {
+      id: 0,
+      text: "Welcome back!",
+      completed: false,
+    },
+  ],
+}
+
+const store = createStore(todoAppReducer, initialState)
+
 if (document.getElementById("root"))
   ReactDOM.render(
-    <Provider store={createStore(todoAppReducer)}>
+    <Provider store={store}>
       <TodoApp />
     </Provider>,
     document.getElementById("root")
