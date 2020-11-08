@@ -85,6 +85,18 @@ const visibilityFilterReducer: Reducer<string, VisibilityFilterAction> = (
   }
 }
 
+// combineReducers() from scratch
+/* function combineReducers(
+  reducers: Record<string, Reducer<any, any>>
+): Reducer<any, any> {
+  return (state = {}, action) => {
+    return Object.keys(reducers).reduce((nextState, key) => {
+      nextState[key] = reducers[key](state[key], action)
+      return nextState
+    }, {} as { [key: string]: any })
+  }
+} */
+
 const todoApp = combineReducers({
   todos: todosReducer,
   visibilityFilter: visibilityFilterReducer,
