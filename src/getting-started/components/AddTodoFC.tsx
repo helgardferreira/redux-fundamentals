@@ -10,13 +10,11 @@ interface AddTodoProps {
 }
 
 let nextId = 0
-const addTodo = (text?: string): AddTodoAction => {
-  return {
-    type: ADD_TODO,
-    id: nextId++,
-    text: text ? text : "",
-  }
-}
+const addTodo = (text: string): AddTodoAction => ({
+  type: ADD_TODO,
+  id: nextId++,
+  text,
+})
 
 // Use null for mapStateToProps if the component doesn't need to connect to the store
 const AddTodoFC = connect(null, (dispatch: AddTodoDispatch) => ({ dispatch }))(
@@ -28,7 +26,7 @@ const AddTodoFC = connect(null, (dispatch: AddTodoDispatch) => ({ dispatch }))(
         <input type="text" ref={input} />
         <button
           onClick={() => {
-            dispatch(addTodo(input.current?.value))
+            dispatch(addTodo(input.current ? input.current.value : ""))
 
             if (input.current) {
               input.current.value = ""

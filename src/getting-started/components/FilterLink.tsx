@@ -15,20 +15,16 @@ const mapStateToProps = (
     filter: string
     children: ReactNode
   }
-) => {
-  return {
-    active: state.visibilityFilter === ownProps.filter,
-  }
-}
+) => ({
+  active: state.visibilityFilter === ownProps.filter,
+})
 
 const mapDispatchToProps = (
   dispatch: Dispatch<VisibilityFilterAction>,
   ownProps: { filter: string }
-) => {
-  return {
-    onClick: () => dispatch(setVisibilityFilter(ownProps.filter)),
-  }
-}
+) => ({
+  onClick: () => dispatch(setVisibilityFilter(ownProps.filter)),
+})
 
 const FilterLink = connect(mapStateToProps, mapDispatchToProps)(LinkFC)
 

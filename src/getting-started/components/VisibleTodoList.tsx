@@ -36,17 +36,13 @@ const toggleTodo = (id: number): ToggleTodoAction => ({ type: TOGGLE_TODO, id })
 const mapStateToProps = (state: {
   todos: Todo[]
   visibilityFilter: string
-}) => {
-  return {
-    todos: getVisibleTodos(state.todos, state.visibilityFilter),
-  }
-}
+}) => ({
+  todos: getVisibleTodos(state.todos, state.visibilityFilter),
+})
 
-const mapDispatchToProps = (dispatch: Dispatch<ToggleTodoAction>) => {
-  return {
-    onTodoClick: (id: number) => dispatch(toggleTodo(id)),
-  }
-}
+const mapDispatchToProps = (dispatch: Dispatch<ToggleTodoAction>) => ({
+  onTodoClick: (id: number) => dispatch(toggleTodo(id)),
+})
 
 // Creating a container component with the use of the connect() utility
 const VisibleTodoList = connect(mapStateToProps, mapDispatchToProps)(TodoListFC)
