@@ -1,4 +1,4 @@
-import { AnyAction, createStore, Reducer, Store } from "redux"
+import { createStore, combineReducers, Reducer, Store } from "redux"
 import { Todo } from "./4-avoidingObjectMutations"
 
 export const ADD_TODO = "ADD_TODO"
@@ -30,7 +30,7 @@ export interface TodoAppState {
 
 export type TodoAppAction = TodoAction | VisibilityFilterAction
 
-export const todoReducer: Reducer<Todo, TodoAppAction> = (
+export const todoReducer: Reducer<Todo, TodoAction> = (
   state = {
     id: 0,
     text: "",
@@ -58,7 +58,7 @@ export const todoReducer: Reducer<Todo, TodoAppAction> = (
   }
 }
 
-export const todosReducer: Reducer<Todo[], TodoAppAction> = (
+export const todosReducer: Reducer<Todo[], TodoAction> = (
   state = [],
   action
 ) => {
@@ -73,7 +73,7 @@ export const todosReducer: Reducer<Todo[], TodoAppAction> = (
   }
 }
 
-const visibilityFilterReducer: Reducer<string, TodoAppAction> = (
+const visibilityFilterReducer: Reducer<string, VisibilityFilterAction> = (
   state = "SHOW_ALL",
   action
 ) => {
@@ -85,12 +85,20 @@ const visibilityFilterReducer: Reducer<string, TodoAppAction> = (
   }
 }
 
-const todoApp: Reducer<TodoAppState, TodoAppAction> = (state = {}, action) => {
+const todoApp = combineReducers({
+  todos: todosReducer,
+  visibilityFilter: visibilityFilterReducer,
+})
+
+/* const todoApp: Reducer<TodoAppState, TodoAppAction> = (state = {}, action) => {
   return {
-    todos: todosReducer(state.todos, action),
-    visibilityFilter: visibilityFilterReducer(state.visibilityFilter, action),
+    todos: todosReducer(state.todos, action as TodoAction),
+    visibilityFilter: visibilityFilterReducer(
+      state.visibilityFilter,
+      action as VisibilityFilterAction
+    ),
   }
-}
+} */
 
 const store = createStore(todoApp)
 
