@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { Todo } from "../4-avoidingObjectMutations"
+import { Todo } from "../types/Todo"
 import TodoFC from "./TodoFC"
 
 const TodoListFC: FunctionComponent<{

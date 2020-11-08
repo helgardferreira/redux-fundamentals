@@ -1,8 +1,8 @@
 import { connect } from "react-redux"
 import { Dispatch } from "redux"
-import { Todo } from "../4-avoidingObjectMutations"
-import { ToggleTodoAction, TOGGLE_TODO } from "../5-todoApp"
 import TodoListFC from "./TodoListFC"
+import { ToggleTodoAction, TOGGLE_TODO } from "../store/actions"
+import { Todo } from "../types/Todo"
 
 // Predicate to determine if todo should be visible
 /* const isTodoVisible = (filter: string) => (todo: Todo) => {

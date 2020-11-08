@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import { connect } from "react-redux"
 import { Dispatch } from "redux"
-import { SET_VISIBILITY_FILTER, VisibilityFilterAction } from "../5-todoApp"
+import { VisibilityFilterAction, SET_VISIBILITY_FILTER } from "../store/actions"
 import LinkFC from "./LinkFC"
 
 const setVisibilityFilter = (filter: string): VisibilityFilterAction => ({
