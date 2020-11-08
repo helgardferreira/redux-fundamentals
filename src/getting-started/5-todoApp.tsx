@@ -1,6 +1,12 @@
 import React, { Component, FunctionComponent, useRef } from "react"
 import ReactDOM from "react-dom"
-import { createStore, combineReducers, Reducer, Unsubscribe } from "redux"
+import {
+  createStore,
+  combineReducers,
+  Reducer,
+  Unsubscribe,
+  Store,
+} from "redux"
 import { Todo } from "./4-avoidingObjectMutations"
 
 export const ADD_TODO = "ADD_TODO"
@@ -104,8 +110,6 @@ const todoAppReducer = combineReducers({
   visibilityFilter: visibilityFilterReducer,
 })
 
-const store = createStore(todoAppReducer)
-
 /* const todoAppReducer: Reducer<TodoAppState, TodoAppAction> = (state = {}, action) => {
   return {
     todos: todosReducer(state.todos, action as TodoAction),
@@ -181,7 +185,7 @@ const TodoListFC: FunctionComponent<{
 // since the component interacts with the store directly.
 // It is also not just a container component since it also partially serves
 // the role of defining the behavior for presentation
-const AddTodoFC: FunctionComponent = () => {
+const AddTodoFC: FunctionComponent<{ store: Store }> = ({ store }) => {
   const input = useRef<HTMLInputElement>(null)
 
   return (
@@ -227,7 +231,7 @@ const LinkFC: FunctionComponent<{
 }
 
 // FilterLink container component
-class FilterLink extends Component<{ filter: string }> {
+class FilterLink extends Component<{ filter: string; store: Store }> {
   private unsubscribe: Unsubscribe = () => {
     return
   }
@@ -235,6 +239,7 @@ class FilterLink extends Component<{ filter: string }> {
   // Anytime the store changes this container component will re-render
   // thanks to forceUpdate()
   componentDidMount() {
+    const { store } = this.props
     store.subscribe(() => this.forceUpdate())
   }
 
@@ -243,7 +248,7 @@ class FilterLink extends Component<{ filter: string }> {
   }
 
   render() {
-    const { filter, children } = this.props
+    const { filter, store, children } = this.props
     const state = store.getState()
 
     return (
@@ -262,18 +267,25 @@ class FilterLink extends Component<{ filter: string }> {
   }
 }
 
-const FooterFC: FunctionComponent = () => (
+const FooterFC: FunctionComponent<{ store: Store }> = ({ store }) => (
   <footer>
-    Show: <FilterLink filter="SHOW_ALL">All</FilterLink>
+    Show:{" "}
+    <FilterLink store={store} filter="SHOW_ALL">
+      All
+    </FilterLink>
     {", "}
-    <FilterLink filter="SHOW_ACTIVE">Active</FilterLink>
+    <FilterLink store={store} filter="SHOW_ACTIVE">
+      Active
+    </FilterLink>
     {", "}
-    <FilterLink filter="SHOW_COMPLETED">Completed</FilterLink>
+    <FilterLink store={store} filter="SHOW_COMPLETED">
+      Completed
+    </FilterLink>
   </footer>
 )
 
 // VisibleTodoList container component
-class VisibleTodoList extends Component {
+class VisibleTodoList extends Component<{ store: Store }> {
   private unsubscribe: Unsubscribe = () => {
     return
   }
@@ -281,6 +293,7 @@ class VisibleTodoList extends Component {
   // Anytime the store changes this container component will re-render
   // thanks to forceUpdate()
   componentDidMount() {
+    const { store } = this.props
     store.subscribe(() => this.forceUpdate())
   }
 
@@ -289,6 +302,7 @@ class VisibleTodoList extends Component {
   }
 
   render() {
+    const { store } = this.props
     const state = store.getState()
 
     return (
@@ -312,13 +326,15 @@ class VisibleTodoList extends Component {
 
 let nextToDoId = 0
 // TodoApp container component
-class TodoApp extends Component {
+class TodoApp extends Component<{ store: Store }> {
   render() {
+    const { store } = this.props
+
     return (
       <>
-        <AddTodoFC />
-        <VisibleTodoList />
-        <FooterFC />
+        <AddTodoFC store={store} />
+        <VisibleTodoList store={store} />
+        <FooterFC store={store} />
       </>
     )
   }
@@ -342,7 +358,10 @@ store.subscribe(render)
 render() */
 
 if (document.getElementById("root"))
-  ReactDOM.render(<TodoApp />, document.getElementById("root"))
+  ReactDOM.render(
+    <TodoApp store={createStore(todoAppReducer)} />,
+    document.getElementById("root")
+  )
 
 /* function printCurrentTodoState(
   store: Store<TodoAppState, TodoAppAction>,
