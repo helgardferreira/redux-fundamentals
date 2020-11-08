@@ -4,6 +4,11 @@ import { Dispatch } from "redux"
 import { SET_VISIBILITY_FILTER, VisibilityFilterAction } from "../5-todoApp"
 import LinkFC from "./LinkFC"
 
+const setVisibilityFilter = (filter: string): VisibilityFilterAction => ({
+  type: SET_VISIBILITY_FILTER,
+  filter,
+})
+
 const mapStateToProps = (
   state: { visibilityFilter: string },
   ownProps: {
@@ -21,8 +26,7 @@ const mapDispatchToProps = (
   ownProps: { filter: string }
 ) => {
   return {
-    onClick: () =>
-      dispatch({ type: SET_VISIBILITY_FILTER, filter: ownProps.filter }),
+    onClick: () => dispatch(setVisibilityFilter(ownProps.filter)),
   }
 }
 

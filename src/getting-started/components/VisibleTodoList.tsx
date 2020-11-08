@@ -31,6 +31,8 @@ const getVisibleTodos = (todos: Todo[], filter: string) => {
   }
 }
 
+const toggleTodo = (id: number): ToggleTodoAction => ({ type: TOGGLE_TODO, id })
+
 const mapStateToProps = (state: {
   todos: Todo[]
   visibilityFilter: string
@@ -42,7 +44,7 @@ const mapStateToProps = (state: {
 
 const mapDispatchToProps = (dispatch: Dispatch<ToggleTodoAction>) => {
   return {
-    onTodoClick: (id: number) => dispatch({ type: TOGGLE_TODO, id }),
+    onTodoClick: (id: number) => dispatch(toggleTodo(id)),
   }
 }
 
