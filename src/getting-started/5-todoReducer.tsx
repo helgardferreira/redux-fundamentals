@@ -1,4 +1,6 @@
-import { createStore, combineReducers, Reducer, Store } from "redux"
+import React, { Component, createRef, ReactNode, RefObject } from "react"
+import ReactDOM from "react-dom"
+import { createStore, combineReducers, Reducer } from "redux"
 import { Todo } from "./4-avoidingObjectMutations"
 
 export const ADD_TODO = "ADD_TODO"
@@ -23,7 +25,7 @@ export interface VisibilityFilterAction {
   filter: string
 }
 
-export interface TodoAppState {
+export interface TodoState {
   todos?: Todo[]
   visibilityFilter?: string
 }
@@ -112,9 +114,62 @@ const todoApp = combineReducers({
   }
 } */
 
+interface TodoAppProps {
+  todos: Todo[]
+  // visibilityFilter: string
+}
+
+let nextToDoId = 0
+class TodoApp extends Component<TodoAppProps> {
+  private input: RefObject<HTMLInputElement>
+
+  constructor(props: TodoAppProps) {
+    super(props)
+    this.input = createRef()
+  }
+
+  render() {
+    return (
+      <div>
+        <input type="text" ref={this.input} />
+        <button
+          onClick={() => {
+            store.dispatch({
+              type: ADD_TODO,
+              id: nextToDoId++,
+              text: this.input.current ? this.input.current.value : "",
+            })
+            if (this.input.current) {
+              this.input.current.value = ""
+              this.input.current.focus()
+            }
+          }}
+        >
+          Add Todo
+        </button>
+        <ul>
+          {this.props.todos?.map(todo => (
+            <li key={todo.id}>{todo.text}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+}
+
+const render = () => {
+  ReactDOM.render(
+    <TodoApp todos={store.getState().todos} />,
+    document.getElementById("root")
+  )
+}
+
 const store = createStore(todoApp)
 
-function printCurrentTodoState(
+store.subscribe(render)
+render()
+
+/* function printCurrentTodoState(
   store: Store<TodoAppState, TodoAppAction>,
   label = "Current state:"
 ) {
@@ -153,4 +208,4 @@ store.dispatch({
   type: SET_VISIBILITY_FILTER,
   filter: "SHOW_COMPLETED",
 })
-printCurrentTodoState(store)
+printCurrentTodoState(store) */
