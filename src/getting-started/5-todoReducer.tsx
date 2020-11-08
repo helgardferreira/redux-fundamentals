@@ -1,6 +1,6 @@
 import React, { Component, FunctionComponent, useRef } from "react"
 import ReactDOM from "react-dom"
-import { createStore, combineReducers, Reducer } from "redux"
+import { createStore, combineReducers, Reducer, Unsubscribe } from "redux"
 import { Todo } from "./4-avoidingObjectMutations"
 
 export const ADD_TODO = "ADD_TODO"
@@ -201,19 +201,18 @@ const AddTodoFC: FunctionComponent<{
   )
 }
 
-const FilterLinkFC: FunctionComponent<{
-  filter: string
-  currentFilter: string
-  onClick: (filter: string) => void
-}> = ({ filter, children, currentFilter, onClick }) => {
-  if (filter === currentFilter) return <span>{children}</span>
+const LinkFC: FunctionComponent<{
+  active: boolean
+  onClick: () => void
+}> = ({ active, children, onClick }) => {
+  if (active) return <span>{children}</span>
 
   return (
     <a
       href="#"
       onClick={e => {
         e.preventDefault()
-        onClick(filter)
+        onClick()
       }}
     >
       {children}
@@ -221,35 +220,49 @@ const FilterLinkFC: FunctionComponent<{
   )
 }
 
-const FooterFC: FunctionComponent<{
-  visibilityFilter: string
-  onFilterLinkClick: (filter: string) => void
-}> = ({ visibilityFilter, onFilterLinkClick }) => (
+// Container component
+class FilterLink extends Component<{ filter: string }> {
+  private unsubscribe: Unsubscribe = () => {
+    return
+  }
+
+  // Anytime the store changes this container component will re-render
+  // thanks to forceUpdate()
+  componentDidMount() {
+    store.subscribe(() => this.forceUpdate())
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe()
+  }
+
+  render() {
+    const { filter, children } = this.props
+    const state = store.getState()
+
+    return (
+      <LinkFC
+        active={filter === state.visibilityFilter}
+        onClick={() =>
+          store.dispatch({
+            type: SET_VISIBILITY_FILTER,
+            filter,
+          })
+        }
+      >
+        {children}
+      </LinkFC>
+    )
+  }
+}
+
+const FooterFC: FunctionComponent = () => (
   <footer>
-    Show:{" "}
-    <FilterLinkFC
-      filter="SHOW_ALL"
-      currentFilter={visibilityFilter}
-      onClick={onFilterLinkClick}
-    >
-      All
-    </FilterLinkFC>
+    Show: <FilterLink filter="SHOW_ALL">All</FilterLink>
     {", "}
-    <FilterLinkFC
-      filter="SHOW_ACTIVE"
-      currentFilter={visibilityFilter}
-      onClick={onFilterLinkClick}
-    >
-      Active
-    </FilterLinkFC>
+    <FilterLink filter="SHOW_ACTIVE">Active</FilterLink>
     {", "}
-    <FilterLinkFC
-      filter="SHOW_COMPLETED"
-      currentFilter={visibilityFilter}
-      onClick={onFilterLinkClick}
-    >
-      Completed
-    </FilterLinkFC>
+    <FilterLink filter="SHOW_COMPLETED">Completed</FilterLink>
   </footer>
 )
 
@@ -283,15 +296,7 @@ class TodoApp extends Component<TodoAppProps> {
             })
           }}
         />
-        <FooterFC
-          visibilityFilter={visibilityFilter}
-          onFilterLinkClick={filter =>
-            store.dispatch({
-              type: SET_VISIBILITY_FILTER,
-              filter,
-            })
-          }
-        />
+        <FooterFC />
       </>
     )
   }
