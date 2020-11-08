@@ -1,13 +1,13 @@
-import { Todo } from "../getting-started/4-avoidingObjectMutations"
 import {
   AddTodoAction,
-  todosReducer,
   ToggleTodoAction,
-} from "../getting-started/5-todoApp"
-import deepFreeze from "../utils/deepFreeze"
+} from "../../getting-started/TodoApp/store/actions"
+import { todosReducer } from "../../getting-started/TodoApp/store/reducers"
+import { TodoType } from "../../getting-started/TodoApp/types/TodoType"
+import deepFreeze from "../../utils/deepFreeze"
 
 test("adds todo to list", () => {
-  const stateBefore: Todo[] = []
+  const stateBefore: TodoType[] = []
 
   const action: AddTodoAction = {
     type: "ADD_TODO",
@@ -18,7 +18,7 @@ test("adds todo to list", () => {
   deepFreeze(stateBefore)
   deepFreeze(action)
 
-  const stateAfter: Todo[] = [
+  const stateAfter: TodoType[] = [
     {
       id: 0,
       text: "Learn Redux",
@@ -30,7 +30,7 @@ test("adds todo to list", () => {
 })
 
 test("toggles todo in list", () => {
-  const stateBefore: Todo[] = [
+  const stateBefore: TodoType[] = [
     {
       id: 0,
       text: "Learn Redux",
@@ -56,7 +56,7 @@ test("toggles todo in list", () => {
   deepFreeze(stateBefore)
   deepFreeze(action)
 
-  const stateAfter: Todo[] = [
+  const stateAfter: TodoType[] = [
     {
       id: 0,
       text: "Learn Redux",

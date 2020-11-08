@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react"
-import { Todo } from "../types/Todo"
+import { TodoType } from "../types/TodoType"
 import TodoFC from "./TodoFC"
 
 const TodoListFC: FunctionComponent<{
-  todos: Todo[]
+  todos: TodoType[]
   onTodoClick: (id: number) => void
 }> = ({ todos, onTodoClick }) => (
   <ul>

@@ -1,8 +1,8 @@
 import { connect } from "react-redux"
 import { Dispatch } from "redux"
-import TodoListFC from "./TodoListFC"
 import { ToggleTodoAction, TOGGLE_TODO } from "../store/actions"
-import { Todo } from "../types/Todo"
+import { TodoType } from "../types/TodoType"
+import TodoListFC from "./TodoListFC"
 
 // Predicate to determine if todo should be visible
 /* const isTodoVisible = (filter: string) => (todo: Todo) => {
@@ -18,7 +18,7 @@ import { Todo } from "../types/Todo"
   }
 } */
 
-const getVisibleTodos = (todos: Todo[], filter: string) => {
+const getVisibleTodos = (todos: TodoType[], filter: string) => {
   switch (filter) {
     case "SHOW_ALL":
       return todos
@@ -34,7 +34,7 @@ const getVisibleTodos = (todos: Todo[], filter: string) => {
 const toggleTodo = (id: number): ToggleTodoAction => ({ type: TOGGLE_TODO, id })
 
 const mapStateToProps = (state: {
-  todos: Todo[]
+  todos: TodoType[]
   visibilityFilter: string
 }) => ({
   todos: getVisibleTodos(state.todos, state.visibilityFilter),

@@ -1,10 +1,12 @@
-interface Todo {
+export const toggleTodo = (todo: {
   id: number
   text: string
   completed: boolean
-}
-
-export const toggleTodo = (todo: Todo): Todo => {
+}): {
+  id: number
+  text: string
+  completed: boolean
+} => {
   /* return Object.assign({}, todo, {
     completed: !todo.completed,
   }) */

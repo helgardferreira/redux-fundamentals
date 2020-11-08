@@ -1,5 +1,5 @@
 import { Reducer, combineReducers } from "redux"
-import { Todo } from "../types/Todo"
+import { TodoType } from "../types/TodoType"
 import {
   TodoAction,
   ADD_TODO,
@@ -8,7 +8,7 @@ import {
   SET_VISIBILITY_FILTER,
 } from "./actions"
 
-export const todoReducer: Reducer<Todo, TodoAction> = (
+export const todoReducer: Reducer<TodoType, TodoAction> = (
   state = {
     id: 0,
     text: "",
@@ -36,7 +36,7 @@ export const todoReducer: Reducer<Todo, TodoAction> = (
   }
 }
 
-export const todosReducer: Reducer<Todo[], TodoAction> = (
+export const todosReducer: Reducer<TodoType[], TodoAction> = (
   state = [],
   action
 ) => {
