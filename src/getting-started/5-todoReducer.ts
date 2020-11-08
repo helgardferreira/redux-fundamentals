@@ -1,8 +1,9 @@
-import { Reducer } from "redux"
+import { AnyAction, createStore, Reducer, Store } from "redux"
 import { Todo } from "./4-avoidingObjectMutations"
 
 export const ADD_TODO = "ADD_TODO"
 export const TOGGLE_TODO = "TOGGLE_TODO"
+export const SET_VISIBILITY_FILTER = "SET_VISIBILITY_FILTER"
 
 export interface AddTodoAction {
   type: typeof ADD_TODO
@@ -15,9 +16,21 @@ export interface ToggleTodoAction {
   id: number
 }
 
-type TodoAction = AddTodoAction | ToggleTodoAction
+export type TodoAction = AddTodoAction | ToggleTodoAction
 
-export const todoReducer: Reducer<Todo, TodoAction> = (
+export interface VisibilityFilterAction {
+  type: typeof SET_VISIBILITY_FILTER
+  filter: string
+}
+
+export interface TodoAppState {
+  todos?: Todo[]
+  visibilityFilter?: string
+}
+
+export type TodoAppAction = TodoAction | VisibilityFilterAction
+
+export const todoReducer: Reducer<Todo, TodoAppAction> = (
   state = {
     id: 0,
     text: "",
@@ -45,7 +58,7 @@ export const todoReducer: Reducer<Todo, TodoAction> = (
   }
 }
 
-export const todosReducer: Reducer<Todo[], TodoAction> = (
+export const todosReducer: Reducer<Todo[], TodoAppAction> = (
   state = [],
   action
 ) => {
@@ -59,3 +72,65 @@ export const todosReducer: Reducer<Todo[], TodoAction> = (
       return state
   }
 }
+
+const visibilityFilterReducer: Reducer<string, TodoAppAction> = (
+  state = "SHOW_ALL",
+  action
+) => {
+  switch (action.type) {
+    case SET_VISIBILITY_FILTER:
+      return action.filter
+    default:
+      return state
+  }
+}
+
+const todoApp: Reducer<TodoAppState, TodoAppAction> = (state = {}, action) => {
+  return {
+    todos: todosReducer(state.todos, action),
+    visibilityFilter: visibilityFilterReducer(state.visibilityFilter, action),
+  }
+}
+
+const store = createStore(todoApp)
+
+function printCurrentTodoState(
+  store: Store<TodoAppState, TodoAppAction>,
+  label = "Current state:"
+) {
+  console.log(label)
+  console.log(store.getState())
+  console.log("--------------")
+}
+
+printCurrentTodoState(store, "Initial state:")
+
+console.log("Dispatching ADD_TODO")
+store.dispatch({
+  type: ADD_TODO,
+  id: 0,
+  text: "Learn Redux",
+})
+printCurrentTodoState(store)
+
+console.log("Dispatching ADD_TODO")
+store.dispatch({
+  type: ADD_TODO,
+  id: 1,
+  text: "Learn Redux-Observables",
+})
+printCurrentTodoState(store)
+
+console.log("Dispatching TOGGLE_TODO")
+store.dispatch({
+  type: TOGGLE_TODO,
+  id: 0,
+})
+printCurrentTodoState(store)
+
+console.log("Dispatching SET_VISIBILITY_FILTER")
+store.dispatch({
+  type: SET_VISIBILITY_FILTER,
+  filter: "SHOW_COMPLETED",
+})
+printCurrentTodoState(store)
