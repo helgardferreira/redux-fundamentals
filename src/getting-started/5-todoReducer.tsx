@@ -1,9 +1,4 @@
-import React, {
-  Component,
-  createRef,
-  FunctionComponent,
-  RefObject,
-} from "react"
+import React, { Component, FunctionComponent, useRef } from "react"
 import ReactDOM from "react-dom"
 import { createStore, combineReducers, Reducer } from "redux"
 import { Todo } from "./4-avoidingObjectMutations"
@@ -104,12 +99,14 @@ const visibilityFilterReducer: Reducer<string, VisibilityFilterAction> = (
   }
 } */
 
-const todoApp = combineReducers({
+const todoAppReducer = combineReducers({
   todos: todosReducer,
   visibilityFilter: visibilityFilterReducer,
 })
 
-/* const todoApp: Reducer<TodoAppState, TodoAppAction> = (state = {}, action) => {
+const store = createStore(todoAppReducer)
+
+/* const todoAppReducer: Reducer<TodoAppState, TodoAppAction> = (state = {}, action) => {
   return {
     todos: todosReducer(state.todos, action as TodoAction),
     visibilityFilter: visibilityFilterReducer(
@@ -118,29 +115,6 @@ const todoApp = combineReducers({
     ),
   }
 } */
-
-const FilterLink: FunctionComponent<{
-  filter: string
-  currentFilter: string
-}> = ({ filter, children, currentFilter }) => {
-  if (filter === currentFilter) return <span>{children}</span>
-
-  return (
-    <a
-      href="#"
-      onClick={e => {
-        e.preventDefault()
-
-        store.dispatch({
-          type: SET_VISIBILITY_FILTER,
-          filter,
-        })
-      }}
-    >
-      {children}
-    </a>
-  )
-}
 
 // Predicate to determine if todo should be visible
 /* const isTodoVisible = (filter: string) => (todo: Todo) => {
@@ -169,6 +143,7 @@ const getVisibleTodos = (todos: Todo[], filter: string) => {
   }
 }
 
+// Presentational components
 const TodoFC: FunctionComponent<{
   completed: boolean
   onClick: () => any
@@ -202,6 +177,82 @@ const TodoListFC: FunctionComponent<{
   </ul>
 )
 
+const AddTodoFC: FunctionComponent<{
+  onAddClick: (value: string | undefined) => void
+}> = ({ onAddClick }) => {
+  const input = useRef<HTMLInputElement>(null)
+
+  return (
+    <>
+      <input type="text" ref={input} />
+      <button
+        onClick={() => {
+          onAddClick(input.current?.value)
+
+          if (input.current) {
+            input.current.value = ""
+            input.current.focus()
+          }
+        }}
+      >
+        Add Todo
+      </button>
+    </>
+  )
+}
+
+const FilterLinkFC: FunctionComponent<{
+  filter: string
+  currentFilter: string
+  onClick: (filter: string) => void
+}> = ({ filter, children, currentFilter, onClick }) => {
+  if (filter === currentFilter) return <span>{children}</span>
+
+  return (
+    <a
+      href="#"
+      onClick={e => {
+        e.preventDefault()
+        onClick(filter)
+      }}
+    >
+      {children}
+    </a>
+  )
+}
+
+const FooterFC: FunctionComponent<{
+  visibilityFilter: string
+  onFilterLinkClick: (filter: string) => void
+}> = ({ visibilityFilter, onFilterLinkClick }) => (
+  <footer>
+    Show:{" "}
+    <FilterLinkFC
+      filter="SHOW_ALL"
+      currentFilter={visibilityFilter}
+      onClick={onFilterLinkClick}
+    >
+      All
+    </FilterLinkFC>
+    {", "}
+    <FilterLinkFC
+      filter="SHOW_ACTIVE"
+      currentFilter={visibilityFilter}
+      onClick={onFilterLinkClick}
+    >
+      Active
+    </FilterLinkFC>
+    {", "}
+    <FilterLinkFC
+      filter="SHOW_COMPLETED"
+      currentFilter={visibilityFilter}
+      onClick={onFilterLinkClick}
+    >
+      Completed
+    </FilterLinkFC>
+  </footer>
+)
+
 interface TodoAppProps {
   todos: Todo[]
   visibilityFilter: string
@@ -209,36 +260,22 @@ interface TodoAppProps {
 
 let nextToDoId = 0
 class TodoApp extends Component<TodoAppProps> {
-  private input: RefObject<HTMLInputElement>
-
-  constructor(props: TodoAppProps) {
-    super(props)
-    this.input = createRef()
-  }
-
   render() {
     const { todos, visibilityFilter } = this.props
 
     return (
-      <div>
-        <input type="text" ref={this.input} />
-        <button
-          onClick={() => {
+      <>
+        <AddTodoFC
+          onAddClick={value => {
             store.dispatch({
               type: ADD_TODO,
               id: nextToDoId++,
-              text: this.input.current ? this.input.current.value : "",
+              text: value ? value : "",
             })
-            if (this.input.current) {
-              this.input.current.value = ""
-              this.input.current.focus()
-            }
           }}
-        >
-          Add Todo
-        </button>
+        />
         <TodoListFC
-          todos={todos}
+          todos={getVisibleTodos(todos, visibilityFilter)}
           onTodoClick={(id: number) => {
             store.dispatch({
               type: TOGGLE_TODO,
@@ -246,21 +283,16 @@ class TodoApp extends Component<TodoAppProps> {
             })
           }}
         />
-        <p>
-          Show:{" "}
-          <FilterLink filter="SHOW_ALL" currentFilter={visibilityFilter}>
-            All
-          </FilterLink>
-          {", "}
-          <FilterLink filter="SHOW_ACTIVE" currentFilter={visibilityFilter}>
-            Active
-          </FilterLink>
-          {", "}
-          <FilterLink filter="SHOW_COMPLETED" currentFilter={visibilityFilter}>
-            Completed
-          </FilterLink>
-        </p>
-      </div>
+        <FooterFC
+          visibilityFilter={visibilityFilter}
+          onFilterLinkClick={filter =>
+            store.dispatch({
+              type: SET_VISIBILITY_FILTER,
+              filter,
+            })
+          }
+        />
+      </>
     )
   }
 }
@@ -277,8 +309,6 @@ const render = () => {
     )
   }
 }
-
-const store = createStore(todoApp)
 
 store.subscribe(render)
 render()
