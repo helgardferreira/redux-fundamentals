@@ -1,6 +1,9 @@
 import { connect } from "react-redux"
 import { Dispatch } from "redux"
-import { ToggleTodoAction, TOGGLE_TODO } from "../store/actions"
+import {
+  ToggleTodoAction,
+  TOGGLE_TODO,
+} from "../store/actions/toggleTodoAction"
 import { TodoType } from "../types/TodoType"
 import TodoListFC from "./TodoListFC"
 

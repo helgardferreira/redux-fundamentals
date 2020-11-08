@@ -1,7 +1,7 @@
 import React, { useRef } from "react"
 import { connect } from "react-redux"
 import { Dispatch } from "redux"
-import { AddTodoAction, ADD_TODO } from "../store/actions"
+import { AddTodoAction, ADD_TODO } from "../store/actions/addTodoAction"
 
 type AddTodoDispatch = Dispatch<AddTodoAction>
 
