@@ -177,9 +177,11 @@ const TodoListFC: FunctionComponent<{
   </ul>
 )
 
-const AddTodoFC: FunctionComponent<{
-  onAddClick: (value: string | undefined) => void
-}> = ({ onAddClick }) => {
+// For the time being this is not a purely presentational component
+// since the component interacts with the store directly.
+// It is also not just a container component since it also partially serves
+// the role of defining the behavior for presentation
+const AddTodoFC: FunctionComponent = () => {
   const input = useRef<HTMLInputElement>(null)
 
   return (
@@ -187,7 +189,11 @@ const AddTodoFC: FunctionComponent<{
       <input type="text" ref={input} />
       <button
         onClick={() => {
-          onAddClick(input.current?.value)
+          store.dispatch({
+            type: ADD_TODO,
+            id: nextToDoId++,
+            text: input.current ? input.current.value : "",
+          })
 
           if (input.current) {
             input.current.value = ""
@@ -220,7 +226,7 @@ const LinkFC: FunctionComponent<{
   )
 }
 
-// Container component
+// FilterLink container component
 class FilterLink extends Component<{ filter: string }> {
   private unsubscribe: Unsubscribe = () => {
     return
@@ -266,48 +272,65 @@ const FooterFC: FunctionComponent = () => (
   </footer>
 )
 
-interface TodoAppProps {
-  todos: Todo[]
-  visibilityFilter: string
-}
+// VisibleTodoList container component
+class VisibleTodoList extends Component {
+  private unsubscribe: Unsubscribe = () => {
+    return
+  }
 
-let nextToDoId = 0
-class TodoApp extends Component<TodoAppProps> {
+  // Anytime the store changes this container component will re-render
+  // thanks to forceUpdate()
+  componentDidMount() {
+    store.subscribe(() => this.forceUpdate())
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe()
+  }
+
   render() {
-    const { todos, visibilityFilter } = this.props
+    const state = store.getState()
 
     return (
+      <TodoListFC
+        todos={getVisibleTodos(state.todos, state.visibilityFilter)}
+        onTodoClick={(id: number) => {
+          store.dispatch({
+            type: TOGGLE_TODO,
+            id,
+          })
+        }}
+      />
+    )
+  }
+}
+
+/* interface TodoAppProps {
+  todos: Todo[]
+  visibilityFilter: string
+} */
+
+let nextToDoId = 0
+// TodoApp container component
+class TodoApp extends Component {
+  render() {
+    return (
       <>
-        <AddTodoFC
-          onAddClick={value => {
-            store.dispatch({
-              type: ADD_TODO,
-              id: nextToDoId++,
-              text: value ? value : "",
-            })
-          }}
-        />
-        <TodoListFC
-          todos={getVisibleTodos(todos, visibilityFilter)}
-          onTodoClick={(id: number) => {
-            store.dispatch({
-              type: TOGGLE_TODO,
-              id,
-            })
-          }}
-        />
+        <AddTodoFC />
+        <VisibleTodoList />
         <FooterFC />
       </>
     )
   }
 }
 
-const render = () => {
+// This approach is no longer necessary since the container components will
+// re-render when the store changes instead of the entire app re-rendering
+// when the store changes
+/* const render = () => {
   if (document.getElementById("root")) {
     ReactDOM.render(
       <TodoApp
-        /* todos={store.getState().todos}
-        visibilityFilter={store.getState().visibilityFilter} */
         {...store.getState()}
       />,
       document.getElementById("root")
@@ -316,7 +339,10 @@ const render = () => {
 }
 
 store.subscribe(render)
-render()
+render() */
+
+if (document.getElementById("root"))
+  ReactDOM.render(<TodoApp />, document.getElementById("root"))
 
 /* function printCurrentTodoState(
   store: Store<TodoAppState, TodoAppAction>,

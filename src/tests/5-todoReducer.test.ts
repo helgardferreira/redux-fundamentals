@@ -3,7 +3,7 @@ import {
   AddTodoAction,
   todosReducer,
   ToggleTodoAction,
-} from "../getting-started/5-todoReducer"
+} from "../getting-started/5-todoApp"
 import deepFreeze from "../utils/deepFreeze"
 
 test("adds todo to list", () => {
