@@ -42,7 +42,8 @@ class TodoApp extends Component {
 store.subscribe(render)
 render() */
 
-const initialState: {
+// If initial state is needed:
+/* const initialState: {
   todos: TodoType[]
 } = {
   todos: [
@@ -54,7 +55,8 @@ const initialState: {
   ],
 }
 
-const store = createStore(todoAppReducer, initialState)
+const store = createStore(todoAppReducer, initialState) */
+const store = createStore(todoAppReducer)
 
 if (document.getElementById("root"))
   ReactDOM.render(

@@ -1,10 +1,10 @@
-import { ReactNode } from "react"
-import { connect } from "react-redux"
-import { Dispatch } from "redux"
+import React, { FunctionComponent } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import {
   VisibilityFilterAction,
   SET_VISIBILITY_FILTER,
 } from "../store/actions/visibilityFilterAction"
+import RootState from "../types/RootState"
 import LinkFC from "./LinkFC"
 
 const setVisibilityFilter = (filter: string): VisibilityFilterAction => ({
@@ -12,7 +12,26 @@ const setVisibilityFilter = (filter: string): VisibilityFilterAction => ({
   filter,
 })
 
-const mapStateToProps = (
+const FilterLink: FunctionComponent<{ filter: string }> = ({
+  filter,
+  children,
+}) => {
+  const dispatch = useDispatch()
+  const visibilityFilter = useSelector<RootState, string>(
+    state => state.visibilityFilter
+  )
+
+  return (
+    <LinkFC
+      active={filter === visibilityFilter}
+      onClick={() => dispatch(setVisibilityFilter(filter))}
+    >
+      {children}
+    </LinkFC>
+  )
+}
+
+/* const mapStateToProps = (
   state: { visibilityFilter: string },
   ownProps: {
     filter: string
@@ -29,7 +48,7 @@ const mapDispatchToProps = (
   onClick: () => dispatch(setVisibilityFilter(ownProps.filter)),
 })
 
-const FilterLink = connect(mapStateToProps, mapDispatchToProps)(LinkFC)
+const FilterLink = connect(mapStateToProps, mapDispatchToProps)(LinkFC) */
 
 // FilterLink container component
 /* class FilterLink extends Component<{ filter: string }> {

@@ -1,9 +1,10 @@
-import { connect } from "react-redux"
-import { Dispatch } from "redux"
+import React, { FunctionComponent } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import {
   ToggleTodoAction,
   TOGGLE_TODO,
 } from "../store/actions/toggleTodoAction"
+import RootState from "../types/RootState"
 import { TodoType } from "../types/TodoType"
 import TodoListFC from "./TodoListFC"
 
@@ -36,7 +37,23 @@ const getVisibleTodos = (todos: TodoType[], filter: string) => {
 
 const toggleTodo = (id: number): ToggleTodoAction => ({ type: TOGGLE_TODO, id })
 
-const mapStateToProps = (state: {
+const VisibleTodoList: FunctionComponent = () => {
+  const { todos, visibilityFilter } = useSelector<RootState, RootState>(
+    state => state
+  )
+  const dispatch = useDispatch()
+
+  return (
+    <TodoListFC
+      todos={getVisibleTodos(todos, visibilityFilter)}
+      onTodoClick={(id: number) => {
+        dispatch(toggleTodo(id))
+      }}
+    />
+  )
+}
+
+/* const mapStateToProps = (state: {
   todos: TodoType[]
   visibilityFilter: string
 }) => ({
@@ -48,7 +65,7 @@ const mapDispatchToProps = (dispatch: Dispatch<ToggleTodoAction>) => ({
 })
 
 // Creating a container component with the use of the connect() utility
-const VisibleTodoList = connect(mapStateToProps, mapDispatchToProps)(TodoListFC)
+const VisibleTodoList = connect(mapStateToProps, mapDispatchToProps)(TodoListFC) */
 
 export default VisibleTodoList
 

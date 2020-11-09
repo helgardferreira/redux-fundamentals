@@ -1,13 +1,6 @@
-import React, { useRef } from "react"
-import { connect } from "react-redux"
-import { Dispatch } from "redux"
+import React, { FunctionComponent, useRef } from "react"
+import { useDispatch } from "react-redux"
 import { AddTodoAction, ADD_TODO } from "../store/actions/addTodoAction"
-
-type AddTodoDispatch = Dispatch<AddTodoAction>
-
-interface AddTodoProps {
-  dispatch: AddTodoDispatch
-}
 
 let nextId = 0
 const addTodo = (text: string): AddTodoAction => ({
@@ -15,6 +8,35 @@ const addTodo = (text: string): AddTodoAction => ({
   id: nextId++,
   text,
 })
+
+const AddTodoFC: FunctionComponent = () => {
+  const input = useRef<HTMLInputElement>(null)
+  const dispatch = useDispatch()
+
+  return (
+    <>
+      <input type="text" ref={input} />
+      <button
+        onClick={() => {
+          dispatch(addTodo(input.current ? input.current.value : ""))
+
+          if (input.current) {
+            input.current.value = ""
+            input.current.focus()
+          }
+        }}
+      >
+        Add Todo
+      </button>
+    </>
+  )
+}
+
+/* type AddTodoDispatch = Dispatch<AddTodoAction>
+
+interface AddTodoProps {
+  dispatch: AddTodoDispatch
+}
 
 // Use null for mapStateToProps if the component doesn't need to connect to the store
 const AddTodoFC = connect(null, (dispatch: AddTodoDispatch) => ({ dispatch }))(
@@ -39,7 +61,7 @@ const AddTodoFC = connect(null, (dispatch: AddTodoDispatch) => ({ dispatch }))(
       </>
     )
   }
-)
+) */
 
 /* const AddTodoFC: FunctionComponent = () => {
   const input = useRef<HTMLInputElement>(null)
@@ -53,7 +75,7 @@ const AddTodoFC = connect(null, (dispatch: AddTodoDispatch) => ({ dispatch }))(
         onClick={() => {
           store.dispatch({
             type: ADD_TODO,
-            id: nextToDoId++,
+            id: nextId++,
             text: input.current ? input.current.value : "",
           })
 
